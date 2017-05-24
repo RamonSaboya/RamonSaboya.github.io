@@ -5,12 +5,31 @@ const PATH_STROKE = 5;
 
 // Inicia a caminho de controle
 var path = new Path().stroke(PATH_COLOR, PATH_STROKE).addTo(stage);
+var bezier = new Path().stroke('black', 2).addTo(stage);
+
+function calcBezier() {
+  bezier.segments(Array(0));
+  bezier.moveTo(path.segments()[0][1], path.segments()[0][2]);
+  for(var t = 0; t <= 1; t += 0.01) {
+    var points = path.segments().slice(0);
+
+    for(var p = 1; p < points.length; p++) {
+      for(var c = 0; c < points.length - p; c++) {
+        points[c][1] = (1 - t) * points[c][1] + t * points[c + 1][1];
+        points[c][2] = (1 - t) * points[c][2] + t * points[c + 1][2];
+	  }
+    }
+
+    bezier.lineTo(points[0][1], points[0][2]);
+  }
+  bezier.lineTo(path.segments()[path.segments().length - 1][1], path.segments()[path.segments().length - 1][2]);
+}
 
 // Mapeamento de ID de pontos para ID de vétice do caminho de controle.
 // Remoções de pontos irão dessincronizar o mapeamento
 // ID do objeto círculo -> index de segmento no caminho de controle
-var idMap = [ -1, -1 ]; // Popula casas ignoradas
-var diff = 2; // Diferença inicial de 2 (stage e path)
+var idMap = [ -1, -1, -1 ]; // Popula casas ignoradas
+var diff = 3; // Diferença inicial de 2 (stage e path)
 
 stage.on('click', function(clickEvent) {
   target = clickEvent.target;
@@ -19,7 +38,7 @@ stage.on('click', function(clickEvent) {
   // id 0 = stage
   // id 1 = path
   // id 2+ = pontos de controle
-  if('id' in target && target.id <= 1) {
+  if('id' in target && target.id <= 2) {
     x = clickEvent.x;
     y = clickEvent.y;
 
@@ -43,6 +62,10 @@ stage.on('click', function(clickEvent) {
       segments[idMap[pointID]][2] = this.attr("y");
 
       path.segments(segments);
+	  
+	  if(path.segments().length > 1) {
+        calcBezier();
+	  }
     });
 
     // Inicializa a função de clique duplo (remoção)
@@ -81,6 +104,10 @@ stage.on('click', function(clickEvent) {
       for(var c = pointID + 1; c < segments.length + diff; c++) {
         idMap[c]--;
       }
+	  
+	  if(path.segments().length > 1) {
+        calcBezier();
+	  }
     });
 
     // Adiciona uma vértice no caminho de controle
@@ -91,5 +118,9 @@ stage.on('click', function(clickEvent) {
       // Posteriores
       path.lineTo(x, y);
     }
+	
+	if(path.segments().length > 1) {
+      calcBezier();
+	}
   }
 });
