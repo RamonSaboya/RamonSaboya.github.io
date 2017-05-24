@@ -1,28 +1,47 @@
 const POINT_COLOR = 'red';
-const POINT_RADIUS = 10;
+const POINT_RADIUS = 8;
 const PATH_COLOR = 'blue';
-const PATH_STROKE = 5;
+const PATH_STROKE = 2;
+const BEZIER_COLOR = 'black';
+const BEZIER_STROKE = 2;
+
+const EVALUATIONS = 500;
 
 // Inicia a caminho de controle
 var path = new Path().stroke(PATH_COLOR, PATH_STROKE).addTo(stage);
-var bezier = new Path().stroke('black', 2).addTo(stage);
 
-function calcBezier() {
+// Inicia o caminho da curva de bezier
+var bezier = new Path().stroke(BEZIER_COLOR, BEZIER_STROKE).addTo(stage);
+
+// Desenha a curva de bezier
+function drawBezierCurve() {
+  // Não tem como desenhar a curva com menos de 2 pontos
+  if(path.segments().length < 2) {
+    return;
+  }
+
+  // Copia a curva atual
+  var points = path.segments().splice(0);
+
+  // Reseta a curva atual
   bezier.segments(Array(0));
-  bezier.moveTo(path.segments()[0][1], path.segments()[0][2]);
-  for(var t = 0; t <= 1; t += 0.01) {
-    var points = path.segments().slice(0);
 
+  // Ponto de partida
+  bezier.moveTo(points[0][1], points[0][2]);
+
+  // Calcula as interpolações
+  for(var t = 1 / EVALUATIONS; t < 1; t += 1 / EVALUATIONS) {
     for(var p = 1; p < points.length; p++) {
       for(var c = 0; c < points.length - p; c++) {
         points[c][1] = (1 - t) * points[c][1] + t * points[c + 1][1];
         points[c][2] = (1 - t) * points[c][2] + t * points[c + 1][2];
-	  }
+      }
     }
-
     bezier.lineTo(points[0][1], points[0][2]);
   }
-  bezier.lineTo(path.segments()[path.segments().length - 1][1], path.segments()[path.segments().length - 1][2]);
+
+  // Ponto final
+  bezier.moveTo(points[points.length - 1][1], points[points.length - 1][2]);
 }
 
 // Mapeamento de ID de pontos para ID de vétice do caminho de controle.
@@ -62,10 +81,9 @@ stage.on('click', function(clickEvent) {
       segments[idMap[pointID]][2] = this.attr("y");
 
       path.segments(segments);
-	  
-	  if(path.segments().length > 1) {
-        calcBezier();
-	  }
+
+      // Atualiza a curva de bezier
+      drawBezierCurve();
     });
 
     // Inicializa a função de clique duplo (remoção)
@@ -88,7 +106,7 @@ stage.on('click', function(clickEvent) {
         segments[c] = segments[c + 1];
 
         // Caso seja o primeiro segmento, seta como inicial
-        if(c == 0) {
+        if(c === 0) {
           segments[0][0] = "moveTo";
         }
       }
@@ -101,26 +119,24 @@ stage.on('click', function(clickEvent) {
 
       // Atualiza o mapeamento ID -> segmento
       idMap[pointID] = -1; // Seta a posição do ponto de controle removido
-      for(var c = pointID + 1; c < segments.length + diff; c++) {
+      for(c = pointID + 1; c < segments.length + diff; c++) {
         idMap[c]--;
       }
-	  
-	  if(path.segments().length > 1) {
-        calcBezier();
-	  }
+
+      // Atualiza a curva de bezier
+      drawBezierCurve();
     });
 
     // Adiciona uma vértice no caminho de controle
-    if(path.segments().length == 0) {
+    if(path.segments().length === 0) {
       // Primeiro ponto
       path.moveTo(x, y);
     } else {
       // Posteriores
       path.lineTo(x, y);
     }
-	
-	if(path.segments().length > 1) {
-      calcBezier();
-	}
+
+    // Atualiza a curva de bezier
+    drawBezierCurve();
   }
 });
