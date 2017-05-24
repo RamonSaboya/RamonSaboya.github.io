@@ -1,11 +1,36 @@
 <HTML>
   <HEAD>
+    <TITLE>Projeto PG</TITLE>
     <SCRIPT SRC="bonsai.min.js"></SCRIPT>
+    <STYLE>
+      body {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </STYLE>
   </HEAD>
   <BODY>
-    <DIV ID="main"></DIV>
     <SCRIPT>
-      bonsai.run(document.getElementById('main'), 'pg.js');
+      var w = window,
+          d = document,
+          e = d.documentElement,
+          b = d.body,
+          x = w.innerWidth || e.clientWidth || b.clientWidth,
+          y = w.innerHeight || e.clientHeight || b.clientHeight;
+      var options = {
+        url: 'stage.js',
+        width: x,
+        height: y
+      }
+      bonsai.run(document.body, options);
     </SCRIPT>
   </BODY>
 </HTML>
