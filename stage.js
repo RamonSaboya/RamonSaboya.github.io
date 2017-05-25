@@ -5,58 +5,35 @@ const PATH_STROKE = 2;
 const BEZIER_COLOR = 'black';
 const BEZIER_STROKE = 2;
 
-const EVALUATIONS = 500;
+const ALGORITHM = {
+  DECASTELJAU: 0,
+  BERNSTEIN_POLYNOMIAL: 1
+}
+
+const BEZIER_CURVE_ALGORITHM = ALGORITHM.BERNSTEIN_POLYNOMIAL;
+
+const EVALUATIONS = 1000;
 
 // Inicia a caminho de controle
 var path = new Path().stroke(PATH_COLOR, PATH_STROKE).addTo(stage);
 
-// Inicia o caminho da curva de bezier
-var bezier = new Path().stroke(BEZIER_COLOR, BEZIER_STROKE).addTo(stage);
-
-// Desenha a curva de bezier
-function drawBezierCurve() {
-  // Não tem como desenhar a curva com menos de 2 pontos
-  if(path.segments().length < 2) {
-    return;
-  }
-
-  // Copia a curva atual
-  var points = path.segments().splice(0);
-
-  // Reseta a curva atual
-  bezier.segments(Array(0));
-
-  // Ponto de partida
-  bezier.moveTo(points[0][1], points[0][2]);
-
-  // Calcula as interpolações
-  for(var t = 1 / EVALUATIONS; t < 1; t += 1 / EVALUATIONS) {
-    for(var p = 1; p < points.length; p++) {
-      for(var c = 0; c < points.length - p; c++) {
-        points[c][1] = (1 - t) * points[c][1] + t * points[c + 1][1];
-        points[c][2] = (1 - t) * points[c][2] + t * points[c + 1][2];
-      }
-    }
-    bezier.lineTo(points[0][1], points[0][2]);
-  }
-
-  // Ponto final
-  bezier.moveTo(points[points.length - 1][1], points[points.length - 1][2]);
-}
+// Inicia o caminho da curva de bézier
+var bézier = new Path().stroke(BEZIER_COLOR, BEZIER_STROKE).addTo(stage);
 
 // Mapeamento de ID de pontos para ID de vétice do caminho de controle.
 // Remoções de pontos irão dessincronizar o mapeamento
 // ID do objeto círculo -> index de segmento no caminho de controle
 var idMap = [ -1, -1, -1 ]; // Popula casas ignoradas
-var diff = 3; // Diferença inicial de 2 (stage e path)
+var diff = 3; // Diferença inicial de 3 (stage, caminho de contorle e curva)
 
 stage.on('click', function(clickEvent) {
   target = clickEvent.target;
 
   // Verifica se o objeto clicado não é um ponto
   // id 0 = stage
-  // id 1 = path
-  // id 2+ = pontos de controle
+  // id 1 = caminho de controle
+  // id 2 = curva de bézier
+  // id 3+ = pontos de controle
   if('id' in target && target.id <= 2) {
     x = clickEvent.x;
     y = clickEvent.y;
@@ -82,7 +59,7 @@ stage.on('click', function(clickEvent) {
 
       path.segments(segments);
 
-      // Atualiza a curva de bezier
+      // Atualiza a curva de bézier
       drawBezierCurve();
     });
 
@@ -123,7 +100,7 @@ stage.on('click', function(clickEvent) {
         idMap[c]--;
       }
 
-      // Atualiza a curva de bezier
+      // Atualiza a curva de bézier
       drawBezierCurve();
     });
 
@@ -136,7 +113,88 @@ stage.on('click', function(clickEvent) {
       path.lineTo(x, y);
     }
 
-    // Atualiza a curva de bezier
+    // Atualiza a curva de bézier
     drawBezierCurve();
   }
 });
+
+// Desenha a curva de bézier
+function drawBezierCurve() {
+  // Não tem como desenhar a curva com menos de 2 pontos
+  if(path.segments().length < 2) {
+    return;
+  }
+
+  // Copia o array de vértices do caminho de controle (pontos de controle)
+  var points = path.segments().splice(0);
+
+  // Reseta a curva atual
+  bézier.segments(Array(0));
+
+  // Ponto de partida
+  bézier.moveTo(points[0][1], points[0][2]);
+
+  // Calcula e insere as interpolações na curva de bézier
+  var n = points.length - 1;
+  var x = 0, y = 0;
+  var bern;
+  for(var t = 1 / EVALUATIONS; t < 1; t += 1 / EVALUATIONS, x = 0, y = 0) {
+    if(BEZIER_CURVE_ALGORITHM === ALGORITHM.DECASTELJAU) {
+      for(var p = 1; p < points.length; p++) {
+        for(var c = 0; c < points.length - p; c++) {
+          points[c][1] = (1 - t) * points[c][1] + t * points[c + 1][1];
+          points[c][2] = (1 - t) * points[c][2] + t * points[c + 1][2];
+        }
+      }
+
+      // A interpolação fica armazenada no primeiro index do array
+      x = points[0][1];
+      y = points[0][2];
+    } else {
+      for(var i = 0; i <= n; i++) {
+        // Calcula o coeficiente do polinômio de bézier
+        bern = comb(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
+
+        x += bern * points[i][1];
+        y += bern * points[i][2];
+      }
+    }
+
+    // Independente do algoritmo, insere a vértice na curva de bézier
+    bézier.lineTo(x, y);
+  }
+
+  // Ponto final
+  bézier.lineTo(points[n][1], points[n][2]);
+}
+
+//---------------------- APENAS PARA BERNSTEIN ---------------------------------
+
+if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
+  // Cache para fatorial dos números
+  var cache = [ 1, 1 ];
+
+  // Retorna o fatorial de N, com cache e memorizaçào
+  function fat(n) {
+    if(n < cache.length) {
+      return cache[n];
+    } else {
+      // Calcula e memoriza o fatorial todo X <= n não presente no cache
+      for(var c = cache.length; c <= n; c++) {
+        cache[c] = c * cache[c - 1];
+      }
+
+      return cache[n];
+    }
+  }
+
+  // Combinação matemática
+  function comb(n, i) {
+    return fat(n) / (fat(i) * fat(n - i));
+  }
+
+  // Memoriza o fatorial dos 50 primeiros inteiros
+  fat(50);
+}
+
+//------------------------------------------------------------------------------
