@@ -190,6 +190,7 @@ if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
       }
     }
 
+    console.log(pascal);
     return pascal[n][i];
   }
 }
