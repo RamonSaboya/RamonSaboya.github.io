@@ -12,7 +12,7 @@ const ALGORITHM = {
 
 const BEZIER_CURVE_ALGORITHM = ALGORITHM.BERNSTEIN_POLYNOMIAL;
 
-const EVALUATIONS = 1000;
+const EVALUATIONS = 500;
 
 // Inicia a caminho de controle
 var path = new Path().stroke(PATH_COLOR, PATH_STROKE).addTo(stage);
@@ -172,7 +172,7 @@ function drawBezierCurve() {
 
 if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
   // Array do triângulo de pascal
-  var pascal = {};
+  var pascal = [];
 
   // Retorna ou calcula, caso necessário, o coeficiente do triângulo de pascal
   function coefficient(n, i) {
@@ -190,7 +190,6 @@ if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
       }
     }
 
-    console.log(pascal);
     return pascal[n][i];
   }
 }
