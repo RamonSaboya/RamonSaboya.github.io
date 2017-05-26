@@ -176,9 +176,9 @@ if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
 
   // Retorna ou calcula, caso necessário, o coeficiente do triângulo de pascal
   function coefficient(n, i) {
-    if(n >= cache.length) {
+    if(n >= pascal.length) {
       // Calcula e memoriza todas as linhas <= n não presente no cache
-      for(var row = cache.length; row <= n; row++) {
+      for(var row = pascal.length; row <= n; row++) {
         pascal[row] = [];
         for(var col = 0; col < row + 1; col++) {
           if(col === 0 || col === row) {
