@@ -153,7 +153,7 @@ function drawBezierCurve() {
     } else {
       for(var i = 0; i <= n; i++) {
         // Calcula o coeficiente do polinômio de bézier
-        bern = comb(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
+        bern = coefficient(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
 
         x += bern * points[i][1];
         y += bern * points[i][2];
@@ -171,30 +171,27 @@ function drawBezierCurve() {
 //---------------------- APENAS PARA BERNSTEIN ---------------------------------
 
 if(BEZIER_CURVE_ALGORITHM === ALGORITHM.BERNSTEIN_POLYNOMIAL) {
-  // Cache para fatorial dos números
-  var cache = [ 1, 1 ];
+  // Array do triângulo de pascal
+  var pascal = {};
 
-  // Retorna o fatorial de N, com cache e memorizaçào
-  function fat(n) {
-    if(n < cache.length) {
-      return cache[n];
-    } else {
-      // Calcula e memoriza o fatorial todo X <= n não presente no cache
-      for(var c = cache.length; c <= n; c++) {
-        cache[c] = c * cache[c - 1];
+  // Retorna ou calcula, caso necessário, o coeficiente do triângulo de pascal
+  function coefficient(n, i) {
+    if(n >= cache.length) {
+      // Calcula e memoriza todas as linhas <= n não presente no cache
+      for(var row = cache.length; row <= n; row++) {
+        pascal[row] = [];
+        for(var col = 0; col < row + 1; col++) {
+          if(col === 0 || col === row) {
+            pascal[row][col] = 1;
+          } else {
+            pascal[row][col] = pascal[row - 1][col - 1] + pascal[row - 1][col];
+          }
+        }
       }
-
-      return cache[n];
     }
-  }
 
-  // Combinação matemática
-  function comb(n, i) {
-    return fat(n) / (fat(i) * fat(n - i));
+    return pascal[n][i];
   }
-
-  // Memoriza o fatorial dos 50 primeiros inteiros
-  fat(50);
 }
 
 //------------------------------------------------------------------------------
