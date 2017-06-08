@@ -4,7 +4,7 @@
     <script src="bonsai-0.4.5.min.js"></script>
     <script src="jquery-3.2.1.min.js"></script>
     <script src="jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dev-styles.css">
     <meta charset="utf-8">
   </head>
   <body>
@@ -24,7 +24,7 @@
       </div>
       <div id="instructions">
         <p>Clique para adcionar pontos</p>
-        <p>Arraste para movê-los</p>
+        <p>Arraste para mov&ecirc;-los</p>
         <p>Duplo clique para remover</p>
       </div>
     </div>
@@ -95,6 +95,16 @@
           function setConvexHull(checkbox) {
             controller.sendMessage('convex-hull', { data: checkbox.checked });
           }
+
+          // Avisa ao bonsai para ligar ou desligar o invólucro convexo
+          function setRealTime(checkbox) {
+            controller.sendMessage('real-time', { data: checkbox.checked });
+          }
+
+          // Avisa ao bonsai para ligar ou desligar o invólucro convexo
+          function setSmallPoints(checkbox) {
+            controller.sendMessage('small-points', { data: checkbox.checked });
+          }
         </script>
       </div>
     </div>
@@ -146,11 +156,19 @@
                 <p class="config-key">Inv&oacute;lucro convexo:</p><input class="config-value" type="checkbox" onclick="setConvexHull(this);" checked/>
               </div>
             </div>
+            <div class="config-column">
+              <div class="config-row">
+                <p class="config-key">Atualiza&ccedil;&otilde;es em tempo real:</p><input class="config-value" type="checkbox" onclick="setRealTime(this);"/>
+              </div>
+              <div class="config-row">
+                <p class="config-key">Pontos pequenos:</p><input class="config-value" type="checkbox" onclick="setSmallPoints(this);" checked/>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div id="credits">
-        <p>João Filipe Moura</p>
+        <p title="pruuu">Jo&atilde;o Filipe Moura</p>
         <p>Ramon de Saboya</p>
       </div>
     </div>

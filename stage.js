@@ -1,5 +1,6 @@
 const POINT_COLOR = 'red';
-const POINT_RADIUS = 8;
+const POINT_SMALL_RADIUS = 8;
+const POINT_BIG_RADIUS = 16;
 const PATH_COLOR = 'blue';
 const PATH_STROKE = 2;
 const HULL_COLOR = 'green';
@@ -13,8 +14,11 @@ var BEZIER_CURVE_ALGORITHM = 0;
 
 var EVALUATIONS = 500;
 
-var showPoint = true;
+var SHOW_POINT = true;
 
+var POINT_RADIUS = POINT_SMALL_RADIUS;
+
+var REAL_TIME = false;
 
 /* global stage */
 /* global Path */
@@ -61,7 +65,7 @@ stage.on('click', function(clickEvent) {
     // Ponto de controle
     var point = new Circle(x, y, POINT_RADIUS).fill(POINT_COLOR).addTo(stage);
 
-    if(!showPoint) {
+    if(!SHOW_POINT) {
       point.attr("radius", 0);
     }
 
@@ -87,7 +91,15 @@ stage.on('click', function(clickEvent) {
       path.segments(segments);
 
       // Atualiza a curva de bézier
-      drawBezierCurve();
+      if(REAL_TIME) {
+        drawBezierCurve();
+      }
+    });
+
+    point.on('pointerup', function(upEvent) {
+      if(!REAL_TIME) {
+        drawBezierCurve();
+      }
     });
 
     // Inicializa a função de clique duplo (remoção)
@@ -182,7 +194,7 @@ stage.on('message:control-points', function(message) {
     });
   }
 
-  showPoint = message.data;
+  SHOW_POINT = message.data;
 });
 
 stage.on('message:bezier-curve', function(message) {
@@ -198,6 +210,26 @@ stage.on('message:convex-hull', function(message) {
     hull.attr("strokeWidth", HULL_STROKE);
   } else {
     hull.attr("strokeWidth", 0);
+  }
+});
+
+stage.on('message:real-time', function(message) {
+  REAL_TIME = message.data;
+});
+
+stage.on('message:small-points', function(message) {
+  if(message.data) {
+    POINT_RADIUS = POINT_SMALL_RADIUS;
+  } else {
+    POINT_RADIUS = POINT_BIG_RADIUS;
+  }
+
+  if(SHOW_POINT) {
+    stage.children().forEach(function(point) {
+      if(point instanceof Circle) {
+        point.attr("radius", POINT_RADIUS);
+      }
+    });
   }
 });
 
@@ -240,7 +272,7 @@ function drawBezierCurve() {
       x = points[0][1];
       y = points[0][2];
     } else {
-      for(var c = 0; c <= n; c++) {
+      for(c = 0; c <= n; c++) {
         // Calcula o coeficiente do polinômio de bézier
         bern = coefficient(n, c) * Math.pow(1 - t, n - c) * Math.pow(t, c);
 

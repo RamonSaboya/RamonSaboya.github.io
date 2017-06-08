@@ -1,0 +1,258 @@
+body {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+
+  background: radial-gradient(black 15%, transparent 16%) 0 0,
+              radial-gradient(black 15%, transparent 16%) 8px 8px,
+              radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+              radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+  background-color:#282828;
+  background-size:16px 16px;
+
+  cursor: default;
+  user-select: none;
+
+  overflow: hidden;
+}
+
+#header {
+  order: 1;
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+
+  padding: 10px;
+  border: 3px solid white;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#stage {
+  order: 2;
+  flex: 1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  
+  border-right: 3px solid white;
+  border-right: 3px solid rgba(255, 255, 255, 0.3);
+  border-left: 3px solid white;
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#footer {
+  order: 3;
+  flex: 0 1 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+
+  padding: 5px;
+  border: 3px solid white;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#work-info {
+  order: 1;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#instructions {
+  order: 2;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+  
+  padding-top: 8px;
+  border-top: 3px solid white;
+  border-top: 3px solid rgba(255, 255, 255, 0.3);
+  
+  font-size: 90%;
+}
+
+#inner-stage {
+  order: 1;
+  flex: 1;
+
+  width: 100%;
+  height: 100%;
+}
+
+#config {
+  order: 1;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+#title {
+  flex: 2;
+}
+
+#credits {
+  order: 2;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+}
+
+.text-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.header-item {
+  order: 1;
+  flex: 1;
+  
+  margin: 10px;
+}
+
+.bottom {
+  align-self: flex-end;
+}
+
+.bottom:last-child {
+  text-align: right;
+}
+
+.config-container {
+  order: 1;
+  flex: 1;
+  
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  
+  margin: 0 10px 0 10px;
+}
+
+.config-label {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+.config-option {
+  order: 2;
+  flex: 0 0 auto;
+}
+
+.config-rows {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}
+
+.config-column {
+  order: 1;
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  
+  margin: 0 5px 0 5px;
+}
+
+.config-column:first-child {
+  margin-left: 0;
+}
+
+.config-column:last-child {
+  margin-right: 0;
+}
+
+.config-column > p {
+  order: 1;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.config-row {
+  order: 1;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.config-key {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+.config-value {
+  order: 2;
+  flex: 0 0 auto;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  
+  width: auto;
+  
+  color: white;
+}
+
+input {
+  width: 40px;
+  cursor: default;
+  user-select: none;
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  margin-left: 10px;
+  width: auto;
+}
+
+#credits > p {
+  color: grey;
+  
+  margin: 0 10px 0 10px;
+}
+
+#instructions > p {
+  margin: 0 10px 0 10px;
+}
