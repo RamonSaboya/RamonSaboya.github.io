@@ -101,16 +101,24 @@ stage.on('multi:pointerdown', function(clickEvent) {
 
       path.segments(segments);
 
-      // Atualiza a curva de bézier
+      // Caso necessário
       if(REAL_TIME) {
+        // Desenha a curva de bézier
         drawBezierCurve();
+
+        // Desenha o invólucro convexo
+        drawConvexHull();
       }
     });
 
     // Se não estiver em tempo real, atualiza a curva
     point.on('multi:pointerup', function(upEvent) {
       if(!REAL_TIME) {
+        // Desenha a curva de bézier
         drawBezierCurve();
+
+        // Desenha o invólucro convexo
+        drawConvexHull();
       }
     });
 
@@ -151,8 +159,11 @@ stage.on('multi:pointerdown', function(clickEvent) {
         idMap[c]--;
       }
 
-      // Atualiza a curva de bézier
+      // Desenha a curva de bézier
       drawBezierCurve();
+
+      // Desenha o invólucro convexo
+      drawConvexHull();
     });
 
     // Adiciona uma vértice no poligonal de controle
@@ -164,8 +175,11 @@ stage.on('multi:pointerdown', function(clickEvent) {
       path.lineTo(x, y);
     }
 
-    // Atualiza a curva de bézier
+    // Desenha a curva de bézier
     drawBezierCurve();
+
+    // Desenha o invólucro convexo
+    drawConvexHull();
   }
 });
 
@@ -174,13 +188,21 @@ stage.on('multi:pointerdown', function(clickEvent) {
 stage.on('message:algorithm', function(message) {
   BEZIER_CURVE_ALGORITHM = message.data;
 
+  // Desenha a curva de bézier
   drawBezierCurve();
+
+  // Desenha o invólucro convexo
+  drawConvexHull();
 });
 
 stage.on('message:evaluations', function(message) {
   EVALUATIONS = message.data;
 
+  // Desenha a curva de bézier
   drawBezierCurve();
+
+  // Desenha o invólucro convexo
+  drawConvexHull();
 });
 
 stage.on('message:control-path', function(message) {
@@ -215,6 +237,9 @@ stage.on('message:bezier-curve', function(message) {
   } else {
     bezier.attr("strokeWidth", 0);
   }
+
+  // Desenha a curva de bézier
+  drawBezierCurve();
 });
 
 stage.on('message:convex-hull', function(message) {
@@ -223,6 +248,9 @@ stage.on('message:convex-hull', function(message) {
   } else {
     hull.attr("strokeWidth", 0);
   }
+
+  // Desenha o invólucro convexo
+  drawConvexHull();
 });
 
 stage.on('message:real-time', function(message) {
@@ -249,6 +277,12 @@ stage.on('message:small-points', function(message) {
 
 // Desenha a curva de bézier
 function drawBezierCurve() {
+  // Caso a opção de desenhar a curva esteja desativada
+  // não é necessário executar o algoritmo
+  if(bezier.attr("strokeWidth") === 0) {
+    return;
+  }
+
   // Não tem como desenhar a curva com menos de 2 pontos
   if(path.segments().length < 2) {
     return;
@@ -299,9 +333,6 @@ function drawBezierCurve() {
 
   // Ponto final
   bezier.lineTo(points[n][1], points[n][2]);
-
-  // Desenha o invólucro convexo
-  drawConvexHull();
 }
 
 //---------------------- APENAS PARA BERNSTEIN ---------------------------------
@@ -351,6 +382,12 @@ function findPolarAngle(a, b) {
 }
 
 function drawConvexHull() {
+  // Caso a opção de desenhar o invólucro esteja desativada
+  // não é necessário executar o algoritmo
+  if(hull.attr("strokeWidth") === 0) {
+    return;
+  }
+
   // Reseta o involucro convexo
   hull.segments(Array(0));
 
