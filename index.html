@@ -62,7 +62,7 @@
           function updateValue(amount) {
             var buttonValue = parseInt($('input[name=evaluations]').val());
             var intAmount = parseInt(amount);
-            var current = Math.max(0, Math.min(1000, buttonValue + intAmount));
+            var current = Math.max(0, Math.min(10000, buttonValue + intAmount));
 
             $('input[name=evaluations]').val(current);
             controller.sendMessage('evaluations', { data: current });
@@ -75,7 +75,7 @@
             $('button').each(function(index) {
               var buttonValue = parseInt($(this).text());
               if((buttonValue < 0 && value === 0)
-                  || (buttonValue > 0 && value === 1000)) {
+                  || (buttonValue > 0 && value === 10000)) {
                 $(this).prop("disabled", true);
               } else {
                 $(this).prop("disabled", false);
