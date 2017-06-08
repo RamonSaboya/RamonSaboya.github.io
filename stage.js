@@ -4,7 +4,7 @@ const POINT_BIG_RADIUS = 20;
 const PATH_COLOR = 'blue';
 const PATH_STROKE = 2;
 const HULL_COLOR = 'green';
-const HULL_STROKE = 5;
+const HULL_STROKE = 6;
 const BEZIER_COLOR = 'white';
 const BEZIER_STROKE = 2;
 
@@ -39,7 +39,7 @@ var bezier = new Path().stroke(BEZIER_COLOR, BEZIER_STROKE).addTo(stage);
 
 // Inicia caminho do invólucro convexo
 var hull = new Path().stroke(HULL_COLOR, HULL_STROKE).addTo(stage);
-hull.attr("strokeDash", [ 10, 20 ]);
+hull.attr("strokeDash", [ 10, 10 ]);
 
 // Mapeamento de ID de pontos para ID de vétice do poligonal de controle.
 // Remoções de pontos irão dessincronizar o mapeamento
