@@ -1,6 +1,6 @@
 const POINT_COLOR = 'red';
 const POINT_SMALL_RADIUS = 8;
-const POINT_BIG_RADIUS = 16;
+const POINT_BIG_RADIUS = 20;
 const PATH_COLOR = 'blue';
 const PATH_STROKE = 2;
 const HULL_COLOR = 'green';
@@ -54,7 +54,7 @@ function adjustVLimit(y) {
   return y;
 }
 
-stage.on('click', function(clickEvent) {
+stage.on('multi:pointerdown', function(clickEvent) {
   var target = clickEvent.target;
 
   // Verifica se o objeto clicado não é um ponto
@@ -73,7 +73,7 @@ stage.on('click', function(clickEvent) {
     idMap.push(point.id - diff);
 
     // Inicializa a função de arrasto do ponto
-    point.on('drag', function(dragEvent) {
+    point.on('multi:drag', function(dragEvent) {
       // Move o ponto de controle
       this.attr({
         "x": adjustHLimit(dragEvent.x),
@@ -96,7 +96,7 @@ stage.on('click', function(clickEvent) {
       }
     });
 
-    point.on('pointerup', function(upEvent) {
+    point.on('multi:pointerup', function(upEvent) {
       if(!REAL_TIME) {
         drawBezierCurve();
       }
