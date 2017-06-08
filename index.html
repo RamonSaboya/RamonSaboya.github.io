@@ -9,16 +9,23 @@
   </head>
   <body>
     <div id="header">
-      <div id="university" class="header-item bottom">
-        <p>Universidade federal de Pernambuco</p>
-        <p>Recife, PE</p>
+      <div id="work-info">
+        <div id="university" class="header-item bottom">
+          <p>Universidade federal de Pernambuco</p>
+          <p>Recife, PE</p>
+        </div>
+        <div id="title" class="header-item">
+          <p class="text-title">Curva de B&eacute;zier - Inv&oacute;lucro Convexo</p>
+        </div>
+        <div id="discipline" class="header-item bottom">
+          <p>Processamento Gr&aacute;fico</p>
+          <p>Professor S&iacute;lvio Melo</p>
+        </div>
       </div>
-      <div id="title" class="header-item">
-        <p class="text-title">Curva de B&eacute;zier - Inv&oacute;lucro Convexo</p>
-      </div>
-      <div id="discipline" class="header-item bottom">
-        <p>Processamento Gr&aacute;fico</p>
-        <p>Professor S&iacute;lvio Melo</p>
+      <div id="instructions">
+        <p>Clique para adcionar pontos</p>
+        <p>Arraste para movê-los</p>
+        <p>Duplo clique para remover</p>
       </div>
     </div>
     <div id="stage">
@@ -29,7 +36,7 @@
 
           var b = document.getElementById("inner-stage"),
               x = b.offsetWidth,
-              y = b.offsetHeight - 100;
+              y = b.offsetHeight - 105;
           var options = {
             url: 'stage.js',
             width: x,
@@ -79,11 +86,6 @@
       </div>
     </div>
     <div id="footer">
-      <div id="instructions">
-        <p>Clique para adcionar pontos</p>
-        <p>Arraste para movê-los</p>
-        <p>Duplo clique para remover</p>
-      </div>
       <div id="config">
         <div id="algorithm" class="config-container">
           <div class="config-label">
@@ -133,6 +135,10 @@
             </div>
           </div>
         </div>
+      </div>
+      <div id="credits">
+        <p>João Filipe Moura</p>
+        <p>Ramon de Saboya</p>
       </div>
     </div>
   </body>
