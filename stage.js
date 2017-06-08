@@ -56,9 +56,9 @@ function adjustVLimit(y) {
 
 stage.on('multi:pointerdown', function(clickEvent) {
   var target = clickEvent.target;
-
+  
   // Verifica se o objeto clicado não é um ponto
-  if(!(target instanceof Circle)) {
+  if(!(target instanceof Circle) && clickEvent.isLeft) {
     var x = adjustHLimit(clickEvent.x);
     var y = adjustVLimit(clickEvent.y);
 
