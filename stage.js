@@ -145,6 +145,8 @@ stage.on('click', function(clickEvent) {
   }
 });
 
+//-------------------------------- Eventos -------------------------------------
+
 stage.on('message:algorithm', function(message) {
   BEZIER_CURVE_ALGORITHM = message.data;
 
@@ -198,6 +200,8 @@ stage.on('message:convex-hull', function(message) {
     hull.attr("strokeWidth", 0);
   }
 });
+
+//------------------------------------------------------------------------------
 
 // Desenha a curva de bézier
 function drawBezierCurve() {
