@@ -25,16 +25,8 @@ body {
 
   cursor: default;
   user-select: none;
-}
-
-p {
-  margin: 0;
-  padding: 0;
-  border: 0;
   
-  width: auto;
-  
-  color: white;
+  overflow: hidden;
 }
 
 #header {
@@ -69,7 +61,7 @@ p {
 
 #footer {
   order: 3;
-  flex: 0 0 90px;
+  flex: 0 0 140px;
 
   display: flex;
   flex-flow: column nowrap;
@@ -114,6 +106,29 @@ p {
   height: 100%;
 }
 
+#config {
+  order: 1;
+  flex: 1;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#title {
+  flex: 2;
+}
+
+#credits {
+  order: 2;
+  flex: 0 0 auto;
+  
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+}
+
 .text-title {
   font-size: 30px;
   font-weight: bold;
@@ -122,7 +137,7 @@ p {
 
 .header-item {
   order: 1;
-  flex: 0 0 auto;
+  flex: 1;
   
   margin: 10px;
 }
@@ -135,16 +150,6 @@ p {
   text-align: right;
 }
 
-#config {
-  order: 1;
-  flex: 1;
-  
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-around;
-  align-items: center;
-}
-
 .config-container {
   order: 1;
   flex: 1;
@@ -153,6 +158,8 @@ p {
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
+  
+  margin: 0 10px 0 10px;
 }
 
 .config-label {
@@ -168,6 +175,7 @@ p {
 .config-rows {
   display: flex;
   flex-flow: row wrap;
+  justify-content: flex-start;
 }
 
 .config-column {
@@ -178,7 +186,7 @@ p {
   flex-flow: column nowrap;
   justify-content: space-between;
   
-  margin: 0 10px 0 10px;
+  margin: 0 5px 0 5px;
 }
 
 .config-column:first-child {
@@ -216,6 +224,16 @@ p {
   flex: 0 0 auto;
 }
 
+p {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  
+  width: auto;
+  
+  color: white;
+}
+
 input {
   width: 40px;
   cursor: default;
@@ -228,17 +246,12 @@ input[type="checkbox"] {
   width: auto;
 }
 
-#credits {
-  order: 2;
-  flex: 0 0 auto;
-  
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-}
-
 #credits > p {
   color: grey;
   
+  margin: 0 10px 0 10px;
+}
+
+#instructions > p {
   margin: 0 10px 0 10px;
 }
