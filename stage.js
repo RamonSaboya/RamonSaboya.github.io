@@ -218,14 +218,13 @@ function drawBezierCurve() {
 
   // Ponto de partida
   bezier.moveTo(points[0][1], points[0][2]);
-
+  
   // Calcula e insere as interpolações na curva de bézier
   var n = points.length - 1;
   var x = 0, y = 0;
   var bern;
-
   for(var t = 1 / EVALUATIONS; t < 1; t += 1 / EVALUATIONS, x = 0, y = 0) {
-    if(BEZIER_CURVE_ALGORITHM === 0) {
+    if(BEZIER_CURVE_ALGORITHM == 0) {
       // Reseta o array de pontos
       points = path.segments();
 
