@@ -15,7 +15,9 @@
           <p>Recife, PE</p>
         </div>
         <div id="title" class="header-item">
-          <p class="text-title">Curva de B&eacute;zier - Inv&oacute;lucro Convexo</p>
+          <p class="text-title">
+            Curva de B&eacute;zier - Inv&oacute;lucro Convexo
+          </p>
         </div>
         <div id="discipline" class="header-item bottom">
           <p>Processamento Gr&aacute;fico</p>
@@ -41,34 +43,39 @@
           window.onload = function() {
             var x = $("#inner-stage").width(),
                 y = $("#inner-stage").height();
-                
+
+            var stageElement = document.getElementById('inner-stage');
             var options = {
               url: 'stage.js',
               width: x,
               height: y
             };
-            controller = bonsai.run(document.getElementById('inner-stage'), options);
+            controller = bonsai.run(stageElement, options);
           };
 
-          // Avisa ao bonsai para trocar o algoritmo de geração de curva de Bézier
+          // Avisa ao bonsai para trocar o algoritmo da curva de Bézier
           function changeAlgorithm(option) {
             controller.sendMessage('algorithm', { data: option.value });
           }
 
           // Avisa ao bonsai para atualizar a quantidade de avaliações
           function updateValue(amount) {
-            var current = Math.max(0, Math.min(1000, parseInt($('input[name=evaluations]').val()) + parseInt(amount)));
-            
+            var buttonValue = parseInt($('input[name=evaluations]').val());
+            var intAmount = parseInt(amount);
+            var current = Math.max(0, Math.min(1000, buttonValue + intAmount));
+
             $('input[name=evaluations]').val(current);
             controller.sendMessage('evaluations', { data: current });
-            
+
             updateButtons(current);
           }
 
           // Atualiza o estado dos botões de avaliação
           function updateButtons(value) {
             $('button').each(function(index) {
-              if((parseInt($(this).text()) < 0 && value === 0) || (parseInt($(this).text()) > 0 && value === 1000)) {
+              var buttonValue = parseInt($(this).text());
+              if((buttonValue < 0 && value === 0)
+                  || (buttonValue > 0 && value === 1000)) {
                 $(this).prop("disabled", true);
               } else {
                 $(this).prop("disabled", false);
@@ -78,32 +85,44 @@
 
           // Avisa ao bonsai para ligar ou desligar o poligonal de controle
           function setControlPath(checkbox) {
-            controller.sendMessage('control-path', { data: checkbox.checked });
+            controller.sendMessage('control-path', {
+              data: checkbox.checked
+            });
           }
 
           // Avisa ao bonsai para ligar ou desligar os pontos de controle
           function setControlPoints(checkbox) {
-            controller.sendMessage('control-points', { data: checkbox.checked });
+            controller.sendMessage('control-points', {
+              data: checkbox.checked
+            });
           }
 
           // Avisa ao bonsai para ligar ou desligar a curva de Bézier
           function setBezierCurve(checkbox) {
-            controller.sendMessage('bezier-curve', { data: checkbox.checked });
+            controller.sendMessage('bezier-curve', {
+              data: checkbox.checked
+            });
           }
 
           // Avisa ao bonsai para ligar ou desligar o invólucro convexo
           function setConvexHull(checkbox) {
-            controller.sendMessage('convex-hull', { data: checkbox.checked });
+            controller.sendMessage('convex-hull', {
+              data: checkbox.checked
+            });
           }
 
-          // Avisa ao bonsai para ligar ou desligar o invólucro convexo
+          // Avisa ao bonsai para ligar ou desligar atualizações em tempo real
           function setRealTime(checkbox) {
-            controller.sendMessage('real-time', { data: checkbox.checked });
+            controller.sendMessage('real-time', {
+              data: checkbox.checked
+            });
           }
 
-          // Avisa ao bonsai para ligar ou desligar o invólucro convexo
+          // Avisa ao bonsai para aumentar ou diminuir o tamanho dos pontos
           function setSmallPoints(checkbox) {
-            controller.sendMessage('small-points', { data: checkbox.checked });
+            controller.sendMessage('small-points', {
+              data: checkbox.checked
+            });
           }
         </script>
       </div>
@@ -142,26 +161,34 @@
           <div class="config-option config-rows">
             <div class="config-column">
               <div class="config-row">
-                <p class="config-key">Poligonal de controle:</p><input class="config-value" type="checkbox" onclick="setControlPath(this);" checked/>
+                <p class="config-key">Poligonal de controle:</p>
+                <input class="config-value" type="checkbox" onclick="setControlPath(this);" checked/>
               </div>
               <div class="config-row">
-                <p class="config-key">Pontos de controle:</p><input class="config-value" type="checkbox" onclick="setControlPoints(this);" checked/>
-              </div>
-            </div>
-            <div class="config-column">
-              <div class="config-row">
-                <p class="config-key">Curva de B&eacute;zier:</p><input class="config-value" type="checkbox" onclick="setBezierCurve(this);" checked/>
-              </div>
-              <div class="config-row">
-                <p class="config-key">Inv&oacute;lucro convexo:</p><input class="config-value" type="checkbox" onclick="setConvexHull(this);" checked/>
+                <p class="config-key">Pontos de controle:</p>
+                <input class="config-value" type="checkbox" onclick="setControlPoints(this);" checked/>
               </div>
             </div>
             <div class="config-column">
               <div class="config-row">
-                <p class="config-key">Atualiza&ccedil;&otilde;es em tempo real:</p><input class="config-value" type="checkbox" onclick="setRealTime(this);"/>
+                <p class="config-key">Curva de B&eacute;zier:</p>
+                <input class="config-value" type="checkbox" onclick="setBezierCurve(this);" checked/>
               </div>
               <div class="config-row">
-                <p class="config-key">Pontos pequenos:</p><input class="config-value" type="checkbox" onclick="setSmallPoints(this);" checked/>
+                <p class="config-key">Inv&oacute;lucro convexo:</p>
+                <input class="config-value" type="checkbox" onclick="setConvexHull(this);" checked/>
+              </div>
+            </div>
+            <div class="config-column">
+              <div class="config-row">
+                <p class="config-key">
+                  Atualiza&ccedil;&otilde;es em tempo real:
+                </p>
+                <input class="config-value" type="checkbox" onclick="setRealTime(this);"/>
+              </div>
+              <div class="config-row">
+                <p class="config-key">Pontos pequenos:</p>
+                <input class="config-value" type="checkbox" onclick="setSmallPoints(this);" checked/>
               </div>
             </div>
           </div>

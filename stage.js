@@ -10,21 +10,28 @@ const BEZIER_STROKE = 2;
 
 const ONE_RADIAN = 57.295779513082;
 
+// Algoritmo escolhido para gerar a curva de Bézier
+// 0 = De Casteljau
+// 1 = Bernstein Polynomial
 var BEZIER_CURVE_ALGORITHM = 0;
 
+// Quantidade de avaliações da curva de Bézier
 var EVALUATIONS = 500;
 
+// Mostrar pontos de controle
 var SHOW_POINT = true;
 
+// Tamano do ponto de controle
 var POINT_RADIUS = POINT_SMALL_RADIUS;
 
+// Atualizações em tempo real
 var REAL_TIME = false;
 
 /* global stage */
 /* global Path */
 /* global Circle */
 
-// Inicia a caminho de controle
+// Inicia o poligonal de controle
 var path = new Path().stroke(PATH_COLOR, PATH_STROKE).addTo(stage);
 
 // Inicia o caminho da curva de bézier
@@ -34,11 +41,12 @@ var bezier = new Path().stroke(BEZIER_COLOR, BEZIER_STROKE).addTo(stage);
 var hull = new Path().stroke(HULL_COLOR, HULL_STROKE).addTo(stage);
 hull.attr("strokeDash", [ 10, 20 ]);
 
-// Mapeamento de ID de pontos para ID de vétice do caminho de controle.
+// Mapeamento de ID de pontos para ID de vétice do poligonal de controle.
 // Remoções de pontos irão dessincronizar o mapeamento
-// ID do objeto círculo -> index de segmento no caminho de controle
+// ID do objeto círculo -> index de segmento no poligonal de controle
 var idMap = [ -1, -1, -1, -1 ]; // Popula casas ignoradas
-var diff = 4; // Diferença inicial de 3 (stage, caminho de contorle e curva)
+// Diferença inicial de 3 (stage, poligonal e pontos de controle e invólucro)
+var diff = 4;
 
 // Obtém o valor de x ajustado a tela
 function adjustHLimit(x) {
@@ -54,10 +62,12 @@ function adjustVLimit(y) {
   return y;
 }
 
+// Adcionar pontos de controle
 stage.on('multi:pointerdown', function(clickEvent) {
   var target = clickEvent.target;
-  
+
   // Verifica se o objeto clicado não é um ponto
+  // apenas cliques com o botão esquerdo são considerados
   if(!(target instanceof Circle) && clickEvent.isLeft) {
     var x = adjustHLimit(clickEvent.x);
     var y = adjustVLimit(clickEvent.y);
@@ -65,6 +75,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
     // Ponto de controle
     var point = new Circle(x, y, POINT_RADIUS).fill(POINT_COLOR).addTo(stage);
 
+    // Caso precise esconder o ponto
     if(!SHOW_POINT) {
       point.attr("radius", 0);
     }
@@ -84,7 +95,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
 
       var segments = path.segments();
 
-      // Atualiza o caminho de controle, movendo a vértice correspondente
+      // Atualiza o poligonal de controle, movendo a vértice correspondente
       segments[idMap[pointID]][1] = this.attr("x");
       segments[idMap[pointID]][2] = this.attr("y");
 
@@ -96,6 +107,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
       }
     });
 
+    // Se não estiver em tempo real, atualiza a curva
     point.on('multi:pointerup', function(upEvent) {
       if(!REAL_TIME) {
         drawBezierCurve();
@@ -115,7 +127,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
       var pointID = this.id;
       var segIndex = idMap[pointID];
 
-      // Arrasta todos as vértices do caminho de controle para a esquerda
+      // Arrasta todos as vértices do poligonal de controle para a esquerda
       // Substituindo o ponto de controle que foi removido
       // E deixando um duplicado ao final do array
       for(var c = segIndex; c < segments.length - 1; c++) {
@@ -143,7 +155,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
       drawBezierCurve();
     });
 
-    // Adiciona uma vértice no caminho de controle
+    // Adiciona uma vértice no poligonal de controle
     if(path.segments().length === 0) {
       // Primeiro ponto
       path.moveTo(x, y);
@@ -242,7 +254,7 @@ function drawBezierCurve() {
     return;
   }
 
-  // Copia o array de vértices do caminho de controle (pontos de controle)
+  // Copia o array de vértices do poligonal de controle (pontos de controle)
   var points = path.segments();
 
   // Reseta a curva atual
@@ -250,7 +262,7 @@ function drawBezierCurve() {
 
   // Ponto de partida
   bezier.moveTo(points[0][1], points[0][2]);
-  
+
   // Calcula e insere as interpolações na curva de bézier
   var n = points.length - 1;
   var x = 0, y = 0;
@@ -347,7 +359,7 @@ function drawConvexHull() {
     return;
   }
 
-  // Copia o array de vértices do caminho de controle (pontos de controle)
+  // Copia o array de vértices do poligonal de controle (pontos de controle)
   var points = path.segments();
 
   // Pega o ponto com a menor coordenada y
