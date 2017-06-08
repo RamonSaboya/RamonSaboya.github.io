@@ -34,20 +34,28 @@
           /* global $ */
           /* global bonsai */
 
-          var b = document.getElementById("inner-stage"),
-              x = b.offsetWidth,
-              y = b.offsetHeight - 155;
-          var options = {
-            url: 'stage.js',
-            width: x,
-            height: y
-          };
-          var controller = bonsai.run(document.getElementById('inner-stage'), options);
+          var controller;
 
+          // Só pode ser executado no fim do load
+          // para garantir o tamanhho do elemento
+          window.onload = function() {
+            var x = $("#inner-stage").width(),
+                y = $("#inner-stage").height();
+                
+            var options = {
+              url: 'stage.js',
+              width: x,
+              height: y
+            };
+            controller = bonsai.run(document.getElementById('inner-stage'), options);
+          };
+
+          // Avisa ao bonsai para trocar o algoritmo de geração de curva de Bézier
           function changeAlgorithm(option) {
             controller.sendMessage('algorithm', { data: option.value });
           }
-          
+
+          // Avisa ao bonsai para atualizar a quantidade de avaliações
           function updateValue(amount) {
             var current = Math.max(0, Math.min(1000, parseInt($('input[name=evaluations]').val()) + parseInt(amount)));
             
@@ -56,7 +64,8 @@
             
             updateButtons(current);
           }
-          
+
+          // Atualiza o estado dos botões de avaliação
           function updateButtons(value) {
             $('button').each(function(index) {
               if((parseInt($(this).text()) < 0 && value === 0) || (parseInt($(this).text()) > 0 && value === 1000)) {
@@ -66,19 +75,23 @@
               }
             });
           }
-          
+
+          // Avisa ao bonsai para ligar ou desligar o poligonal de controle
           function setControlPath(checkbox) {
             controller.sendMessage('control-path', { data: checkbox.checked });
           }
-          
+
+          // Avisa ao bonsai para ligar ou desligar os pontos de controle
           function setControlPoints(checkbox) {
             controller.sendMessage('control-points', { data: checkbox.checked });
           }
-          
+
+          // Avisa ao bonsai para ligar ou desligar a curva de Bézier
           function setBezierCurve(checkbox) {
             controller.sendMessage('bezier-curve', { data: checkbox.checked });
           }
-          
+
+          // Avisa ao bonsai para ligar ou desligar o invólucro convexo
           function setConvexHull(checkbox) {
             controller.sendMessage('convex-hull', { data: checkbox.checked });
           }
