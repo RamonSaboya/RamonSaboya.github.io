@@ -68,7 +68,7 @@ stage.on('multi:pointerdown', function(clickEvent) {
 
   // Verifica se o objeto clicado não é um ponto
   // apenas cliques com o botão esquerdo são considerados
-  if(!(target instanceof Circle) && clickEvent.isLeft) {
+  if(!(target instanceof Circle) && !clickEvent.isRight) {
     var x = adjustHLimit(clickEvent.x);
     var y = adjustVLimit(clickEvent.y);
 
