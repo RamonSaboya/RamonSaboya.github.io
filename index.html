@@ -1,43 +1,139 @@
-<HTML>
-  <HEAD>
-    <TITLE>Projeto PG</TITLE>
-    <SCRIPT SRC="bonsai.min.js"></SCRIPT>
-    <LINK REL="stylesheet" HREF="styles.css">
-    <META CHARSET="UTF-8">
-  </HEAD>
-  <BODY>
-    <DIV ID="header">
-      <DIV ID="university" CLASS="header-item bottom">
-        <P>Universidade federal de Pernambuco</P>
-      </DIV>
-      <DIV ID="title" CLASS="header-item">
-        <P CLASS="text-title">Curva de Bézier</P>
-        <P CLASS="text-title">Involucro Convexo</P>
-      </DIV>
-      <DIV ID="discipline" CLASS="header-item bottom">
-        <P>Processamento Gráfico</P>
-        <P>Professor Sílvio Melo</P>
-      </DIV>
-    </DIV>
-    <DIV ID="stage">
-      <DIV ID="inner-stage">
-        <SCRIPT>
+<html>
+  <head>
+    <title>Inv&oacute;lucro Convexo</title>
+    <script src="bonsai-0.4.5.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="header">
+      <div id="university" class="header-item bottom">
+        <p>Universidade federal de Pernambuco</p>
+        <p>Recife, PE</p>
+      </div>
+      <div id="title" class="header-item">
+        <p class="text-title">Curva de B&eacute;zier - Inv&oacute;lucro Convexo</p>
+      </div>
+      <div id="discipline" class="header-item bottom">
+        <p>Processamento Gr&aacute;fico</p>
+        <p>Professor S&iacute;lvio Melo</p>
+      </div>
+    </div>
+    <div id="stage">
+      <div id="inner-stage">
+        <script>
+          /* global $ */
+          /* global bonsai */
+
           var b = document.getElementById("inner-stage"),
               x = b.offsetWidth,
-              y = b.offsetHeight - 150;
+              y = b.offsetHeight - 100;
           var options = {
             url: 'stage.js',
             width: x,
             height: y
+          };
+          var controller = bonsai.run(document.getElementById('inner-stage'), options);
+
+          function changeAlgorithm(option) {
+            controller.sendMessage('algorithm', { data: option.value });
           }
-          bonsai.run(document.getElementById('inner-stage'), options);
-        </SCRIPT>
-      </DIV>
-    </DIV>
-    <DIV ID="config">
-      <DIV ID="algorithms" CLASS="config-group"></DIV>
-      <DIV ID="parameters" CLASS="config-group"></DIV>
-      <DIV ID="design" CLASS="config-group"></DIV>
-    </DIV>
-  </BODY>
-</HTML>
+          
+          function updateValue(amount) {
+            var current = Math.max(0, Math.min(1000, parseInt($('input[name=evaluations]').val()) + parseInt(amount)));
+            
+            $('input[name=evaluations]').val(current);
+            controller.sendMessage('evaluations', { data: current });
+            
+            updateButtons(current);
+          }
+          
+          function updateButtons(value) {
+            $('button').each(function(index) {
+              if((parseInt($(this).text()) < 0 && value === 0) || (parseInt($(this).text()) > 0 && value === 1000)) {
+                $(this).prop("disabled", true);
+              } else {
+                $(this).prop("disabled", false);
+              }
+            });
+          }
+          
+          function setControlPath(checkbox) {
+            controller.sendMessage('control-path', { data: checkbox.checked });
+          }
+          
+          function setControlPoints(checkbox) {
+            controller.sendMessage('control-points', { data: checkbox.checked });
+          }
+          
+          function setBezierCurve(checkbox) {
+            controller.sendMessage('bezier-curve', { data: checkbox.checked });
+          }
+          
+          function setConvexHull(checkbox) {
+            controller.sendMessage('convex-hull', { data: checkbox.checked });
+          }
+        </script>
+      </div>
+    </div>
+    <div id="footer">
+      <div id="instructions">
+        <p>Clique para adcionar pontos</p>
+        <p>Arraste para movê-los</p>
+        <p>Duplo clique para remover</p>
+      </div>
+      <div id="config">
+        <div id="algorithm" class="config-container">
+          <div class="config-label">
+            <p>Algoritmo da curva de B&eacute;zier</p>
+          </div>
+          <div class="config-option">
+            <select onchange="changeAlgorithm(this);">
+              <option value="0" selected>De Casteljau</option>
+              <option value="1">Bernstein Polynomial</option>
+            </select>
+          </div>
+        </div>
+        <div id="evaluations" class="config-container">
+          <div class="config-label">
+            <p>N&uacute;mero de avalia&ccedil;&otilde;es</p>
+          </div>
+          <div class="config-option">
+            <button class="button" onclick="updateValue(-100);">-100</button>
+            <button class="button" onclick="updateValue(-10);">-10</button>
+            <button class="button" onclick="updateValue(-1);">-1</button>
+            <input type="text" name="evaluations" value="500" disabled/>
+            <button class="button" onclick="updateValue(1);">+1</button>
+            <button class="button" onclick="updateValue(10);">+10</button>
+            <button class="button" onclick="updateValue(100);">+100</button>
+          </div>
+        </div>
+        <div id="display" class="config-container">
+          <div class="config-label">
+            <p>Configura&ccedil;&atilde;o de exibi&ccedil;&atilde;o</p>
+          </div>
+          <div class="config-option config-rows">
+            <div class="config-column">
+              <div class="config-row">
+                <p class="config-key">Poligonal de controle:</p><input class="config-value" type="checkbox" onclick="setControlPath(this);" checked/>
+              </div>
+              <div class="config-row">
+                <p class="config-key">Pontos de controle:</p><input class="config-value" type="checkbox" onclick="setControlPoints(this);" checked/>
+              </div>
+            </div>
+            <div class="config-column">
+              <div class="config-row">
+                <p class="config-key">Curva de B&eacute;zier:</p><input class="config-value" type="checkbox" onclick="setBezierCurve(this);" checked/>
+              </div>
+              <div class="config-row">
+                <p class="config-key">Inv&oacute;lucro convexo:</p><input class="config-value" type="checkbox" onclick="setConvexHull(this);" checked/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
